@@ -29,17 +29,11 @@ namespace Stollie.Keychain
             API.OnHudAwake += (hud) => {  };
             API.SlotAdded += (slotName) => {  };
 
-            // Get all current slots
-            SlotInfo slots = API.GetSlots();
-            Log($"Current Slot count is {slots.SlotNames.Length}");
-
-            // Determine the position of the next available slot
-            int desiredCrpytKeyPosition = SetSlotPositionWithGapAfterExistingSlots(slots, 1);
-
             bool isAPILoaded = API.IsLoaded();
             if (API.IsLoaded())
             {
                 // Add a custom slot for the Crypt Key item
+                int desiredCrpytKeyPosition = SetSlotPositionWithGapAfterExistingSlots(0);
                 bool cryptKeySlotAddedSuccess = API.AddSlot(CryptKeySlotName, GetCryptKeyItem, CanPlaceCryptKey, desiredCrpytKeyPosition);
                 if (!cryptKeySlotAddedSuccess)
                 {
@@ -48,12 +42,16 @@ namespace Stollie.Keychain
                 }
                 else
                     Log($"Successfully added Crypt Key slot to Slot# {desiredCrpytKeyPosition}");
+
             }
         }
 
         // Function to find the position for the new slot
-        private int SetSlotPositionWithGapAfterExistingSlots(SlotInfo slots, int slotGap)
+        private int SetSlotPositionWithGapAfterExistingSlots(int slotGap)
         {
+            // Get all current slots
+            SlotInfo slots = API.GetSlots();
+            Log($"Current Slot count is {slots.SlotNames.Length}");
             return slots.SlotNames.Length + slotGap;
         }
 
